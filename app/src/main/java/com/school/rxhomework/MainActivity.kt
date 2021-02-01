@@ -6,11 +6,12 @@ import android.view.ViewGroup
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.annotations.SerializedName
 import com.school.rxhomework.databinding.ActivityMainBinding
 import com.school.rxhomework.databinding.ItemHolderBinding
+import io.reactivex.rxjava3.core.Observable
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,10 +33,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             root.setOnRefreshListener { viewModel.processAction(Action.RefreshData) }
+
         }
+        
     }
 
-    class Adapter : ListAdapter<Adapter.Item, Adapter.Holder>(DiffCallback) {
+    class Adapter : androidx.recyclerview.widget.ListAdapter<Adapter.Item, Adapter.Holder>(DiffCallback) {
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
             return Holder(parent)
         }
