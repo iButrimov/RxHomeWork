@@ -7,15 +7,16 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.gson.annotations.SerializedName
+import com.jakewharton.rxbinding4.swiperefreshlayout.refreshes
 import com.school.rxhomework.databinding.ActivityMainBinding
 import com.school.rxhomework.databinding.ItemHolderBinding
-import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.disposables.Disposable
 
 class MainActivity : AppCompatActivity() {
 
     private val viewModel by viewModels<ActivityViewModel>()
+    private lateinit var disposable: Disposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,10 +33,14 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
-            root.setOnRefreshListener { viewModel.processAction(Action.RefreshData) }
-
+            //root.setOnRefreshListener { viewModel.processAction(Action.RefreshData) }
+            viewModel.observer.onNext(Unit)
+            disposable = root.refreshes().subscribe(viewModel.observer::onNext)
         }
-        
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        disposable.dispose()
     }
 
     class Adapter : androidx.recyclerview.widget.ListAdapter<Adapter.Item, Adapter.Holder>(DiffCallback) {
